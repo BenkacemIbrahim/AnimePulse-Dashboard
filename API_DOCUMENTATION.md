@@ -1018,7 +1018,7 @@ curl -X POST http://localhost:3000/api/posts \
 
 For issues or questions:
 - Open an issue on GitHub
-- Contact: your.email@example.com
+- Contact: benkacem.ibrahim.dev@gmail.com
 
 ---
 
