@@ -243,7 +243,7 @@ VALUES ('Admin', 'admin@animepulse.com', '$2a$10$...', 'admin');
 
 ```
 animepulse-dashboard/
-├── project/                    # Frontend application
+├── frontend/                    # Frontend application
 │   ├── assets/
 │   │   ├── css/               # Stylesheets
 │   │   │   ├── styles.css     # Main styles
@@ -379,8 +379,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+- GitHub: [@BenkacemIbrahim](https://github.com/BenkacemIbrahim)
+- Email: benkacem.ibrahim.dev@gmail.com
 
 ---
 
