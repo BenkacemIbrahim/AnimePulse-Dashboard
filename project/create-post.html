@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post - AnimePulse Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/create-post.js"></script>
+    <link rel="stylesheet" href="assets/css/create-post.css">
+    <link rel="stylesheet" href="assets/css/home.css">
+</head>
+
+<body class="min-h-screen text-base">
+    <div class="background-pattern"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- Main Content -->
+    <div class="transition-all duration-300 ease-in-out" id="mainContent">
+
+        <div class="p-4 md:p-6 lg:p-8">
+            <div class="max-w-7xl mx-auto">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 md:mb-8">Create New Post</h1>
+
+                <div class="dashboard-card p-6 md:p-8">
+                    <form id="createPostForm" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Post Title</label>
+                            <input id="cpTitle" type="text" class="form-input w-full" placeholder="Enter post title">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Category</label>
+                            <select id="cpCategory" class="form-input w-full"></select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Featured Image</label>
+                            <div
+                                class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary cursor-pointer">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-gray-600">Drag and drop or click to upload</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Content</label>
+                            <textarea id="cpContent" class="form-input w-full h-64"
+                                placeholder="Write your post content here..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Tags</label>
+                            <input id="cpTags" type="text" class="form-input w-full"
+                                placeholder="Enter tags separated by commas">
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button id="cpPublish" type="button"
+                                class="flex-1 px-6 py-3 bg-primary text-white rounded-lg font-bold hover:bg-primary-dark">
+                                <i class="fas fa-save mr-2"></i>Publish
+                            </button>
+                            <button id="cpDraft" type="button"
+                                class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300">
+                                <i class="fas fa-file-save mr-2"></i>Draft
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function updateSidebarState() {
+                if (window.innerWidth >= 1025) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.classList.remove('collapsed');
+                    sidebar.style.display = 'block';
+                    mainContent.style.marginLeft = 'var(--sidebar-width)';
+                    mainContent.style.width = 'calc(100% - var(--sidebar-width))';
+                    sidebarOverlay.classList.remove('active');
+                } else {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.style.display = 'none';
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.width = '100%';
+                    sidebarOverlay.classList.remove('active');
+                }
+            }
+
+            sidebarToggle.addEventListener('click', function () {
+                if (window.innerWidth >= 1025) {
+                    sidebar.classList.toggle('collapsed');
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    mainContent.style.marginLeft = isCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
+                    mainContent.style.width = isCollapsed ? 'calc(100% - var(--sidebar-collapsed-width))' : 'calc(100% - var(--sidebar-width))';
+                }
+            });
+
+            mobileMenuToggle.addEventListener('click', function () {
+                if (window.innerWidth < 1025) {
+                    sidebar.classList.toggle('mobile-open');
+                    sidebar.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
+                    sidebarOverlay.classList.toggle('active');
+                }
+            });
+
+            sidebarOverlay.addEventListener('click', function () {
+                if (window.innerWidth < 1025) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.style.display = 'none';
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+
+            window.addEventListener('resize', updateSidebarState);
+            updateSidebarState();
+            (async function init() {
+                try {
+                    const cats = await API.apiGet('/categories');
+                    const catSelect = document.getElementById('cpCategory');
+                    catSelect.innerHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                } catch { }
+                const form = document.getElementById('createPostForm');
+                const publish = document.getElementById('cpPublish');
+                const draft = document.getElementById('cpDraft');
+                function gather(status) {
+                    return {
+                        title: document.getElementById('cpTitle').value,
+                        content: document.getElementById('cpContent').value,
+                        category_id: Number(document.getElementById('cpCategory').value) || null,
+                        tags: document.getElementById('cpTags').value,
+                        status
+                    };
+                }
+                function submit(status) {
+                    const payload = gather(status);
+                    API.apiPost('/posts', payload).then(() => { alert('Saved'); window.location.href = 'manage-posts.html'; }).catch(() => alert('Save failed'));
+                }
+                publish && publish.addEventListener('click', () => submit('published'));
+                draft && draft.addEventListener('click', () => submit('draft'));
+            })();
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - AnimePulse Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/settings.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <link rel="stylesheet" href="assets/css/settings.css">
+    <link rel="stylesheet" href="assets/css/home.css">
+</head>
+
+<body class="min-h-screen text-base">
+    <div class="background-pattern"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- Main Content -->
+    <div class="transition-all duration-300 ease-in-out" id="mainContent">
+
+        <div class="p-4 md:p-6 lg:p-8">
+            <div class="max-w-7xl mx-auto">
+                <div
+                    class="dashboard-card p-6 md:p-8 mb-6 md:mb-8 animated-bg text-white gradient-border overflow-hidden relative">
+                    <div class="absolute inset-0 bg-noise opacity-10"></div>
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+                        <div class="slide-in">
+                            <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 flex items-center">Settings</h2>
+                            <p class="text-gray-200 text-sm md:text-base lg:text-lg">Configure preferences and system
+                                options</p>
+                        </div>
+                        <div class="mt-6 md:mt-0 fade-in">
+                            <button
+                                class="bg-white hover:bg-gray-100 text-primary px-4 md:px-6 py-2 md:py-3 rounded-lg transition-all flex items-center text-base md:text-lg font-semibold shadow-lg hover:shadow-red-glow relative overflow-hidden">
+                                <span
+                                    class="absolute inset-0 bg-primary opacity-0 hover:opacity-5 transition-opacity"></span>
+                                <i class="fas fa-save mr-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- General Settings -->
+                    <div class="dashboard-card p-6">
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4">General Settings</h2>
+                        <div class="space-y-4">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <div>
+                                    <p class="font-medium text-gray-900">Email Notifications</p>
+                                    <p class="text-sm text-gray-600">Receive email updates about your blog</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input id="notificationsToggle" type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <hr class="my-4">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <div>
+                                    <p class="font-medium text-gray-900">Comments Moderation</p>
+                                    <p class="text-sm text-gray-600">Moderate all comments before publishing</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <hr class="my-4">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <div>
+                                    <p class="font-medium text-gray-900">Dark Mode</p>
+                                    <p class="text-sm text-gray-600">Use dark theme for the dashboard</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input id="darkModeToggle" type="checkbox">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Settings -->
+                    <div class="dashboard-card p-6">
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4">Privacy & Security</h2>
+                        <div class="space-y-4">
+                            <button
+                                class="w-full px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark text-left text-sm md:text-base">
+                                <i class="fas fa-key mr-2"></i>Change Password
+                            </button>
+                            <button
+                                class="w-full px-4 py-2 bg-gray-200 text-gray-900 rounded-lg font-medium hover:bg-gray-300 text-left text-sm md:text-base">
+                                <i class="fas fa-lock mr-2"></i>Two-Factor Authentication
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="dashboard-card p-6 border border-red-200 bg-red-50">
+                        <h2 class="text-xl md:text-2xl font-bold text-red-900 mb-4">Danger Zone</h2>
+                        <button
+                            class="w-full px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 text-sm md:text-base">
+                            <i class="fas fa-trash mr-2"></i>Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                mainContent.style.marginLeft = sidebar.classList.contains('collapsed') ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
+                mainContent.style.width = sidebar.classList.contains('collapsed') ? 'calc(100% - var(--sidebar-collapsed-width))' : 'calc(100% - var(--sidebar-width))';
+            });
+        </script>
+
+        <script>
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function updateSidebarState() {
+                if (window.innerWidth >= 1025) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.classList.remove('collapsed');
+                    sidebar.style.display = 'block';
+                    mainContent.style.marginLeft = 'var(--sidebar-width)';
+                    mainContent.style.width = 'calc(100% - var(--sidebar-width))';
+                    sidebarOverlay.classList.remove('active');
+                } else {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.style.display = 'none';
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.width = '100%';
+                    sidebarOverlay.classList.remove('active');
+                }
+            }
+
+            sidebarToggle.addEventListener('click', function () {
+                if (window.innerWidth >= 1025) {
+                    sidebar.classList.toggle('collapsed');
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    mainContent.style.marginLeft = isCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
+                    mainContent.style.width = isCollapsed ? 'calc(100% - var(--sidebar-collapsed-width))' : 'calc(100% - var(--sidebar-width))';
+                }
+            });
+
+            mobileMenuToggle.addEventListener('click', function () {
+                if (window.innerWidth < 1025) {
+                    sidebar.classList.toggle('mobile-open');
+                    sidebar.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
+                    sidebarOverlay.classList.toggle('active');
+                }
+            });
+
+            sidebarOverlay.addEventListener('click', function () {
+                if (window.innerWidth < 1025) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.style.display = 'none';
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+
+            window.addEventListener('resize', updateSidebarState);
+            updateSidebarState();
+        </script>
+
+</body>
+
+</html>

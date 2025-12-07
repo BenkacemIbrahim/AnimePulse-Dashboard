@@ -1,0 +1,36 @@
+<nav class="bg-white shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-30 backdrop-blur-md bg-white/90">
+  <div class="flex items-center">
+    <button id="mobileMenuToggle" class="p-2 mr-4 rounded-lg text-gray-700 hover:bg-gray-100 focus:outline-none text-xl">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="#374151">
+        <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
+      </svg>
+    </button>
+    <div class="text-2xl font-bold flex items-center">
+      <span class="text-primary" id="header-title"></span>
+    </div>
+  </div>
+  <div class="flex items-center space-x-6">
+    <div class="relative hidden md:block">
+      <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/50 w-64 transition-all duration-300 focus:w-80">
+      <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+    </div>
+    <button class="p-3 rounded-full text-gray-700 hover:bg-gray-100 focus:outline-none text-xl">
+      <i class="fas fa-moon"></i>
+    </button>
+    <div class="relative">
+      <button class="p-3 rounded-full text-gray-700 hover:bg-gray-100 focus:outline-none text-xl relative">
+        <i class="fas fa-bell"></i>
+        <span class="absolute top-0 right-0 h-5 w-5 bg-primary rounded-full text-xs text-white flex items-center justify-center font-bold animate-pulse-slow">3</span>
+      </button>
+    </div>
+    <div class="admin-profile-top-nav flex items-center space-x-3 relative group">
+      <div class="absolute -inset-2 rounded-full bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      <img src="/images/whatsapp-20image-202025-03-07-20at-2022.jpeg" alt="Profile" class="h-10 w-10 rounded-full object-cover border-2 border-primary shadow-red-glow group-hover:shadow-red-glow-lg transition-shadow">
+      <div class="hidden md:block">
+        <span class="text-gray-800 font-medium block">Admin User</span>
+        <span class="text-gray-500 text-sm">Administrator</span>
+      </div>
+      <i class="fas fa-chevron-down text-xs text-gray-500 hidden md:block"></i>
+    </div>
+  </div>
+</nav>

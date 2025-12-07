@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comments - AnimePulse Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/layout.js"></script>
+    <script src="assets/js/comments.js"></script>
+    <link rel="stylesheet" href="assets/css/comments.css">
+    <link rel="stylesheet" href="assets/css/home.css">
+</head>
+
+<body class="min-h-screen text-base">
+    <div class="background-pattern"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- Main Content -->
+    <div class="transition-all duration-300 ease-in-out" id="mainContent">
+
+        <div class="p-4 md:p-6 lg:p-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="fade-in">
+                    <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Comments</h1>
+                    <p class="text-gray-600 text-sm md:text-base mb-6 md:mb-8">Manage and moderate user comments</p>
+
+                    <!-- Filter Section -->
+                    <div class="dashboard-card p-6 mb-6">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <input type="text" placeholder="Search comments..." class="form-input flex-1">
+                            <select class="form-input">
+                                <option>All Status</option>
+                                <option>Approved</option>
+                                <option>Pending</option>
+                                <option>Spam</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        class="dashboard-card p-6 md:p-8 mb-6 md:mb-8 animated-bg text-white gradient-border overflow-hidden relative">
+                        <div class="absolute inset-0 bg-noise opacity-10"></div>
+                        <div
+                            class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+                            <div class="slide-in">
+                                <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 flex items-center">Comments
+                                    Overview</h2>
+                                <p class="text-gray-200 text-sm md:text-base lg:text-lg">Moderate community feedback
+                                    with confidence</p>
+                            </div>
+                            <div class="mt-6 md:mt-0 fade-in">
+                                <button
+                                    class="bg-white hover:bg-gray-100 text-primary px-4 md:px-6 py-2 md:py-3 rounded-lg transition-all flex items-center text-base md:text-lg font-semibold shadow-lg hover:shadow-red-glow relative overflow-hidden">
+                                    <span
+                                        class="absolute inset-0 bg-primary opacity-0 hover:opacity-5 transition-opacity"></span>
+                                    <i class="fas fa-check mr-2"></i> Approve All Pending
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="commentsList" class="dashboard-card p-6"></div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            function updateSidebarState() {
+                if (window.innerWidth >= 1025) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.classList.remove('collapsed');
+                    sidebar.style.display = 'block';
+                    mainContent.style.marginLeft = 'var(--sidebar-width)';
+                    mainContent.style.width = 'calc(100% - var(--sidebar-width))';
+                    sidebarOverlay.classList.remove('active');
+                } else {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.style.display = 'none';
+                    mainContent.style.marginLeft = '0';
+                    mainContent.style.width = '100%';
+                    sidebarOverlay.classList.remove('active');
+                }
+            }
+
+            sidebarToggle.addEventListener('click', function () {
+                if (window.innerWidth >= 1025) {
+                    sidebar.classList.toggle('collapsed');
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    mainContent.style.marginLeft = isCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
+                    mainContent.style.width = isCollapsed ? 'calc(100% - var(--sidebar-collapsed-width))' : 'calc(100% - var(--sidebar-width))';
+                }
+            });
+
+            mobileMenuToggle.addEventListener('click', function () {
+                if (window.innerWidth < 1025) {
+                    sidebar.classList.toggle('mobile-open');
+                    sidebar.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
+                    sidebarOverlay.classList.toggle('active');
+                }
+            });
+
+            sidebarOverlay.addEventListener('click', function () {
+                if (window.innerWidth < 1025) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.style.display = 'none';
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+
+            window.addEventListener('resize', updateSidebarState);
+            updateSidebarState();
+        </script>
+</body>
+
+</html>
