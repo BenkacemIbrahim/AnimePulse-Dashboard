@@ -61,58 +61,7 @@
             </div>
         </div>
 
-        <script>
-            const sidebar = document.getElementById('sidebar');
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const mainContent = document.getElementById('mainContent');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-            function updateSidebarState() {
-                if (window.innerWidth >= 1025) {
-                    sidebar.classList.remove('mobile-open');
-                    sidebar.classList.remove('collapsed');
-                    sidebar.style.display = 'block';
-                    mainContent.style.marginLeft = 'var(--sidebar-width)';
-                    mainContent.style.width = 'calc(100% - var(--sidebar-width))';
-                    sidebarOverlay.classList.remove('active');
-                } else {
-                    sidebar.classList.remove('mobile-open');
-                    sidebar.style.display = 'none';
-                    mainContent.style.marginLeft = '0';
-                    mainContent.style.width = '100%';
-                    sidebarOverlay.classList.remove('active');
-                }
-            }
-
-            sidebarToggle.addEventListener('click', function () {
-                if (window.innerWidth >= 1025) {
-                    sidebar.classList.toggle('collapsed');
-                    const isCollapsed = sidebar.classList.contains('collapsed');
-                    mainContent.style.marginLeft = isCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
-                    mainContent.style.width = isCollapsed ? 'calc(100% - var(--sidebar-collapsed-width))' : 'calc(100% - var(--sidebar-width))';
-                }
-            });
-
-            mobileMenuToggle.addEventListener('click', function () {
-                if (window.innerWidth < 1025) {
-                    sidebar.classList.toggle('mobile-open');
-                    sidebar.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
-                    sidebarOverlay.classList.toggle('active');
-                }
-            });
-
-            sidebarOverlay.addEventListener('click', function () {
-                if (window.innerWidth < 1025) {
-                    sidebar.classList.remove('mobile-open');
-                    sidebar.style.display = 'none';
-                    sidebarOverlay.classList.remove('active');
-                }
-            });
-
-            window.addEventListener('resize', updateSidebarState);
-            updateSidebarState();
-        </script>
+        
 </body>
 
 </html>

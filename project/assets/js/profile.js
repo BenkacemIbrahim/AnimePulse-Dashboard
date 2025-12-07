@@ -71,6 +71,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const nameInput = document.getElementById('fullName');
   const emailInput = document.getElementById('email');
   const avatarImg = document.getElementById('profileImagePreview');
+  const avatarInput = document.getElementById('profileImageUpload');
+  const removePhotoBtn = document.getElementById('removePhotoBtn');
+  const topNavProfileImage = document.getElementById('topNavProfileImage');
+  const sidebarProfileImage = document.getElementById('sidebarProfileImage');
   const saveTop = document.getElementById('saveProfileBtn');
   const saveBottom = document.getElementById('saveProfileBtnBottom');
   async function loadProfile() {
@@ -78,7 +82,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const p = await API.apiGet('/profile');
       nameInput && (nameInput.value = p.name || '');
       emailInput && (emailInput.value = p.email || '');
-      if (avatarImg && p.avatar_url) avatarImg.src = p.avatar_url;
+      if (avatarImg && p.avatar_url) {
+        avatarImg.src = p.avatar_url;
+        if (topNavProfileImage) topNavProfileImage.src = p.avatar_url;
+        if (sidebarProfileImage) sidebarProfileImage.src = p.avatar_url;
+      }
     } catch {}
   }
   async function saveProfile() {
@@ -87,6 +95,32 @@ document.addEventListener('DOMContentLoaded', function () {
       alert('Saved');
     } catch { alert('Save failed'); }
   }
+  if (avatarInput) avatarInput.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = String(reader.result || '');
+      try {
+        const resp = await API.apiPost('/uploads', { data_url: dataUrl });
+        if (avatarImg) avatarImg.src = resp.url;
+        if (topNavProfileImage) topNavProfileImage.src = resp.url;
+        if (sidebarProfileImage) sidebarProfileImage.src = resp.url;
+      } catch {
+        if (avatarImg) avatarImg.src = dataUrl;
+        if (topNavProfileImage) topNavProfileImage.src = dataUrl;
+        if (sidebarProfileImage) sidebarProfileImage.src = dataUrl;
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+  if (removePhotoBtn) removePhotoBtn.addEventListener('click', () => {
+    const placeholder = '/placeholder.svg?height=150&width=150';
+    if (avatarImg) avatarImg.src = placeholder;
+    if (topNavProfileImage) topNavProfileImage.src = '/placeholder.svg?height=40&width=40';
+    if (sidebarProfileImage) sidebarProfileImage.src = '/placeholder.svg?height=40&width=40';
+    if (avatarInput) avatarInput.value = '';
+  });
   if (saveTop) saveTop.addEventListener('click', saveProfile);
   if (saveBottom) saveBottom.addEventListener('click', saveProfile);
   loadProfile();

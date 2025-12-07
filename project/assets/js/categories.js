@@ -15,20 +15,9 @@ tailwind.config = {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-
-    if (sidebarToggle && sidebar && mainContent) {
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            mainContent.style.marginLeft = sidebar.classList.contains('collapsed') ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
-            mainContent.style.width = sidebar.classList.contains('collapsed') ? 'calc(100% - var(--sidebar-collapsed-width))' : 'calc(100% - var(--sidebar-width))';
-        });
-    }
-
     const grid = document.getElementById('categoriesGrid');
     const addBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent && b.textContent.includes('Add Category'));
+    let listCache = [];
 
     function renderCategories(list) {
         if (!grid) return;
@@ -49,34 +38,67 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function loadCategories() {
-        try { const list = await API.apiGet('/categories'); renderCategories(list); }
+        try { const list = await API.apiGet('/categories'); listCache = list || []; renderCategories(listCache); }
         catch { if (grid) grid.innerHTML = '<div class="p-6">Failed to load categories</div>'; }
     }
 
-    function openCreateModal() {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'fixed inset-0 bg-black/50 flex items-center justify-center';
-        wrapper.innerHTML = `
+    function buildEditorModal() {
+        const modal = document.createElement('div');
+        modal.id = 'categoryEditorModal';
+        modal.className = 'fixed inset-0 bg-black/60 hidden items-center justify-center z-[1000] p-4';
+        modal.innerHTML = `
           <div class="bg-white rounded-lg w-full max-w-md p-6">
-            <h3 class="text-xl font-bold mb-4">Add Category</h3>
-            <input id="catName" type="text" class="form-input w-full mb-3" placeholder="Name">
-            <input id="catSlug" type="text" class="form-input w-full mb-3" placeholder="Slug">
-            <div class="flex justify-end gap-2">
-              <button id="cancel" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
-              <button id="save" class="px-4 py-2 bg-primary text-white rounded">Save</button>
+            <h3 class="text-xl font-bold mb-4" id="categoryEditorTitle">Add Category</h3>
+            <div class="space-y-4">
+              <input id="categoryName" type="text" class="form-input w-full" placeholder="Name">
+              <input id="categorySlug" type="text" class="form-input w-full" placeholder="Slug">
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+              <button id="categoryEditorCancel" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+              <button id="categoryEditorSave" class="px-4 py-2 bg-primary text-white rounded">Save</button>
             </div>
           </div>`;
-        document.body.appendChild(wrapper);
-        wrapper.querySelector('#cancel').onclick = () => wrapper.remove();
-        wrapper.querySelector('#save').onclick = async () => {
-            const name = wrapper.querySelector('#catName').value;
-            const slug = wrapper.querySelector('#catSlug').value;
-            try { await API.apiPost('/categories', { name, slug }); wrapper.remove(); await loadCategories(); }
-            catch { alert('Create failed'); }
-        };
+        document.body.appendChild(modal);
+        return modal;
     }
 
-    if (addBtn) addBtn.addEventListener('click', openCreateModal);
+    const editorModal = buildEditorModal();
+
+    function openEditor(title, data) {
+        document.getElementById('categoryEditorTitle').textContent = title;
+        document.getElementById('categoryName').value = data?.name || '';
+        document.getElementById('categorySlug').value = data?.slug || '';
+        editorModal.dataset.editId = data?.id || '';
+        editorModal.classList.remove('hidden'); editorModal.classList.add('flex');
+    }
+
+    function closeEditor() {
+        editorModal.classList.add('hidden'); editorModal.classList.remove('flex');
+        editorModal.dataset.editId = '';
+    }
+
+    const cancelBtn = editorModal.querySelector('#categoryEditorCancel');
+    const saveBtn = editorModal.querySelector('#categoryEditorSave');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeEditor);
+    if (saveBtn) saveBtn.addEventListener('click', async () => {
+        const payload = {
+            name: document.getElementById('categoryName').value,
+            slug: document.getElementById('categorySlug').value
+        };
+        try {
+            if (editorModal.dataset.editId) {
+                await API.apiPut(`/categories/${editorModal.dataset.editId}`, payload);
+            } else {
+                await API.apiPost('/categories', payload);
+            }
+            closeEditor();
+            await loadCategories();
+        } catch {
+            alert('Save failed');
+        }
+    });
+
+    if (addBtn) addBtn.addEventListener('click', () => openEditor('Add Category'));
     if (grid) grid.addEventListener('click', async (e) => {
         const t = e.target;
         const action = t.getAttribute('data-action');
@@ -85,9 +107,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (confirm('Delete category?')) { try { await API.apiDelete(`/categories/${id}`); await loadCategories(); } catch { alert('Delete failed'); } }
         }
         if (action === 'edit') {
-            const name = prompt('New name');
-            const slug = prompt('New slug');
-            if (name && slug) { try { await API.apiPut(`/categories/${id}`, { name, slug }); await loadCategories(); } catch { alert('Update failed'); } }
+            const cat = listCache.find(c => String(c.id) === String(id));
+            if (cat) { openEditor('Edit Category', cat); }
         }
     });
 

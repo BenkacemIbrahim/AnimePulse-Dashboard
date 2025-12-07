@@ -50,18 +50,6 @@ tailwind.config = {
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-
-    if (sidebarToggle && sidebar && mainContent) {
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            mainContent.style.marginLeft = sidebar.classList.contains('collapsed') ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
-            mainContent.style.width = sidebar.classList.contains('collapsed') ? 'calc(100% - var(--sidebar-collapsed-width))' : 'calc(100% - var(--sidebar-width))';
-        });
-    }
-
     try {
         const summary = await API.apiGet('/analytics/summary');
         const postsEl = document.getElementById('statPosts');

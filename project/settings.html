@@ -112,15 +112,18 @@
         </div>
 
         <script>
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('collapsed');
-                mainContent.style.marginLeft = sidebar.classList.contains('collapsed') ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
-                mainContent.style.width = sidebar.classList.contains('collapsed') ? 'calc(100% - var(--sidebar-collapsed-width))' : 'calc(100% - var(--sidebar-width))';
-            });
+            (function () {
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                if (sidebarToggle && sidebar && mainContent) {
+                    sidebarToggle.addEventListener('click', () => {
+                        sidebar.classList.toggle('collapsed');
+                        mainContent.style.marginLeft = sidebar.classList.contains('collapsed') ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)';
+                        mainContent.style.width = sidebar.classList.contains('collapsed') ? 'calc(100% - var(--sidebar-collapsed-width))' : 'calc(100% - var(--sidebar-width))';
+                    });
+                }
+            })();
         </script>
 
         <script>
@@ -131,6 +134,7 @@
             const sidebarOverlay = document.getElementById('sidebarOverlay');
 
             function updateSidebarState() {
+                if (!sidebar || !mainContent || !sidebarOverlay) return;
                 if (window.innerWidth >= 1025) {
                     sidebar.classList.remove('mobile-open');
                     sidebar.classList.remove('collapsed');
@@ -147,7 +151,7 @@
                 }
             }
 
-            sidebarToggle.addEventListener('click', function () {
+            if (sidebarToggle) sidebarToggle.addEventListener('click', function () {
                 if (window.innerWidth >= 1025) {
                     sidebar.classList.toggle('collapsed');
                     const isCollapsed = sidebar.classList.contains('collapsed');
@@ -156,7 +160,7 @@
                 }
             });
 
-            mobileMenuToggle.addEventListener('click', function () {
+            if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', function () {
                 if (window.innerWidth < 1025) {
                     sidebar.classList.toggle('mobile-open');
                     sidebar.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
@@ -164,7 +168,7 @@
                 }
             });
 
-            sidebarOverlay.addEventListener('click', function () {
+            if (sidebarOverlay) sidebarOverlay.addEventListener('click', function () {
                 if (window.innerWidth < 1025) {
                     sidebar.classList.remove('mobile-open');
                     sidebar.style.display = 'none';

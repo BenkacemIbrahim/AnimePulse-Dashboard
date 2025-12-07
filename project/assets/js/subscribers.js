@@ -1,17 +1,17 @@
 tailwind.config = {
-    theme: {
-        extend: {
-            colors: {
-                primary: '#FF0000',
-                'primary-dark': '#CC0000',
-                sidebar: { DEFAULT: '#0F0F0F', foreground: '#FFFFFF', primary: '#FF0000', accent: '#1E1E1E' }
-            },
-            boxShadow: {
-                'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                'card-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
-            }
-        }
+  theme: {
+    extend: {
+      colors: {
+        primary: '#FF0000',
+        'primary-dark': '#CC0000',
+        sidebar: { DEFAULT: '#0F0F0F', foreground: '#FFFFFF', primary: '#FF0000', accent: '#1E1E1E' }
+      },
+      boxShadow: {
+        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        'card-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+      }
     }
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -46,12 +46,50 @@ document.addEventListener('DOMContentLoaded', function () {
     if (action === 'remove') { if (confirm('Remove subscriber?')) { try { await API.apiDelete(`/subscribers/${id}`); await loadSubscribers(); } catch { alert('Remove failed'); } } }
   });
 
-  if (importBtn) importBtn.addEventListener('click', async () => {
-    const email = prompt('Email'); if (!email) return;
-    const name = prompt('Name');
-    try { await API.apiPost('/subscribers', { email, name }); await loadSubscribers(); }
-    catch { alert('Add failed'); }
+  function buildImportModal() {
+    const modal = document.createElement('div');
+    modal.id = 'importModal';
+    modal.className = 'fixed inset-0 bg-black/60 hidden items-center justify-center z-[1000] p-4';
+    modal.innerHTML = `
+      <div class="bg-white rounded-lg w-full max-w-md p-6 max-h-[85vh] overflow-y-auto">
+        <h3 class="text-xl font-bold mb-4">Import Subscriber</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+            <input id="importName" type="text" class="form-input w-full" placeholder="Name">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input id="importEmail" type="email" class="form-input w-full" placeholder="email@example.com">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+          <button id="importCancel" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+          <button id="importStart" class="px-4 py-2 bg-primary text-white rounded">Add</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    return modal;
+  }
+
+  const importModal = buildImportModal();
+
+  function openImport() { importModal.classList.remove('hidden'); importModal.classList.add('flex'); }
+  function closeImport() { importModal.classList.add('hidden'); importModal.classList.remove('flex'); }
+
+  importModal.querySelector('#importCancel').addEventListener('click', closeImport);
+  importModal.querySelector('#importStart').addEventListener('click', async () => {
+    const name = document.getElementById('importName').value.trim() || null;
+    const email = document.getElementById('importEmail').value.trim();
+    if (!email || !/.+@.+\..+/.test(email)) { alert('Enter a valid email'); return; }
+    try {
+      await API.apiPost('/subscribers', { name, email });
+      closeImport();
+      await loadSubscribers();
+    } catch { alert('Add failed'); }
   });
+
+  if (importBtn) importBtn.addEventListener('click', openImport);
 
   loadSubscribers();
 });

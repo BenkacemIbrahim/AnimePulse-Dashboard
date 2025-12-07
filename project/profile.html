@@ -272,7 +272,7 @@
             } else {
                 mainContent.style.marginLeft = '0';
                 mainContent.style.width = '100%';
-                sidebar.style.display = 'none';
+                if (sidebar) sidebar.style.display = 'none';
             }
         })();
 
@@ -297,6 +297,7 @@
 
             // Set initial state based on screen size
             function updateSidebarState() {
+                if (!sidebar || !mainContent || !sidebarOverlay) return;
                 if (window.innerWidth >= 1025) {
                     sidebar.classList.remove('mobile-open');
                     sidebar.classList.remove('collapsed');
@@ -314,7 +315,7 @@
             }
 
             // Desktop Sidebar Toggle (collapse/expand)
-            sidebarToggle.addEventListener('click', function () {
+            if (sidebarToggle) sidebarToggle.addEventListener('click', function () {
                 if (window.innerWidth >= 1025) {
                     sidebar.classList.toggle('collapsed');
                     const isCollapsed = sidebar.classList.contains('collapsed');
@@ -335,7 +336,7 @@
             });
 
             // Mobile Menu Toggle (show/hide sidebar)
-            mobileMenuToggle.addEventListener('click', function () {
+            if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', function () {
                 if (window.innerWidth < 1025) {
                     sidebar.classList.toggle('mobile-open');
                     sidebar.style.display = sidebar.classList.contains('mobile-open') ? 'block' : 'none';
@@ -344,7 +345,7 @@
             });
 
             // Close sidebar when clicking overlay (mobile)
-            sidebarOverlay.addEventListener('click', function () {
+            if (sidebarOverlay) sidebarOverlay.addEventListener('click', function () {
                 if (window.innerWidth < 1025) {
                     sidebar.classList.remove('mobile-open');
                     sidebar.style.display = 'none';
@@ -388,7 +389,7 @@
             });
 
             // Theme toggle functionality
-            themeToggle.addEventListener('click', function () {
+            if (themeToggle) themeToggle.addEventListener('click', function () {
                 body.classList.toggle('dark');
                 const isDark = body.classList.contains('dark');
                 themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
@@ -399,7 +400,7 @@
             const savedTheme = localStorage.getItem('darkMode');
             if (savedTheme === 'enabled') {
                 body.classList.add('dark');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                if (themeToggle) themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             }
 
             // Save Profile Button

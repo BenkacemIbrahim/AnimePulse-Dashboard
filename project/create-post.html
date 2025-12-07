@@ -34,15 +34,18 @@
 
                         <div>
                             <label class="block text-sm font-bold text-gray-900 mb-2">Category</label>
-                            <select id="cpCategory" class="form-input w-full"></select>
+                            <select id="cpCategory" class="form-input w-full">
+                                <option value="" disabled selected>Select a Category</option>
+                            </select>
                         </div>
 
                         <div>
                             <label class="block text-sm font-bold text-gray-900 mb-2">Featured Image</label>
-                            <div
-                                class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary cursor-pointer">
+                            <div id="uploadArea"
+                                class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary cursor-pointer transition-colors relative overflow-hidden">
                                 <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                                <p class="text-gray-600">Drag and drop or click to upload</p>
+                                <p class="text-gray-600">Click to upload image</p>
+                                <input type="file" id="cpFileInput" class="hidden" accept="image/*">
                             </div>
                         </div>
 
@@ -125,14 +128,59 @@
             window.addEventListener('resize', updateSidebarState);
             updateSidebarState();
             (async function init() {
+                // Initialize Categories
                 try {
                     const cats = await API.apiGet('/categories');
                     const catSelect = document.getElementById('cpCategory');
-                    catSelect.innerHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-                } catch { }
+                    // Keep the default option
+                    const defaultOption = '<option value="" disabled selected>Select a Category</option>';
+                    catSelect.innerHTML = defaultOption + cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                } catch (e) {
+                    console.error('Failed to load categories', e);
+                }
+
                 const form = document.getElementById('createPostForm');
                 const publish = document.getElementById('cpPublish');
                 const draft = document.getElementById('cpDraft');
+
+                // File Upload Logic
+                const uploadArea = document.getElementById('uploadArea');
+                const fileInput = document.getElementById('cpFileInput');
+                let selectedFileBase64 = null;
+
+                if (uploadArea && fileInput) {
+                    uploadArea.addEventListener('click', (e) => {
+                        if (e.target !== fileInput) {
+                            fileInput.click();
+                        }
+                    });
+
+                    fileInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (re) => {
+                                selectedFileBase64 = re.target.result;
+                                // Clear previous content except input
+                                const content = Array.from(uploadArea.children).filter(el => el !== fileInput);
+                                content.forEach(el => el.remove());
+
+                                // Add preview
+                                const img = document.createElement('img');
+                                img.src = selectedFileBase64;
+                                img.className = "max-h-64 mx-auto rounded-lg object-contain";
+                                uploadArea.insertBefore(img, fileInput);
+
+                                const p = document.createElement('p');
+                                p.className = "text-sm text-gray-500 mt-2";
+                                p.innerText = "Click to change";
+                                uploadArea.insertBefore(p, fileInput);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }
+
                 function gather(status) {
                     return {
                         title: document.getElementById('cpTitle').value,
@@ -142,10 +190,41 @@
                         status
                     };
                 }
-                function submit(status) {
-                    const payload = gather(status);
-                    API.apiPost('/posts', payload).then(() => { alert('Saved'); window.location.href = 'manage-posts.html'; }).catch(() => alert('Save failed'));
+
+                async function submit(status) {
+                    const publishBtnText = publish.innerHTML;
+                    const draftBtnText = draft.innerHTML;
+
+                    try {
+                        // Loading state
+                        publish.disabled = true;
+                        draft.disabled = true;
+                        publish.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
+                        draft.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+
+                        let imageUrl = null;
+                        if (selectedFileBase64) {
+                            const uploadRes = await API.apiPost('/uploads', { data_url: selectedFileBase64 });
+                            imageUrl = uploadRes.url;
+                        }
+
+                        const payload = gather(status);
+                        if (imageUrl) payload.featured_image_url = imageUrl;
+
+                        await API.apiPost('/posts', payload);
+                        alert('Saved successfully');
+                        window.location.href = 'manage-posts.html';
+                    } catch (e) {
+                        alert('Save failed: ' + (e.message || 'Unknown error'));
+                        console.error(e);
+                    } finally {
+                        publish.disabled = false;
+                        draft.disabled = false;
+                        publish.innerHTML = publishBtnText;
+                        draft.innerHTML = draftBtnText;
+                    }
                 }
+
                 publish && publish.addEventListener('click', () => submit('published'));
                 draft && draft.addEventListener('click', () => submit('draft'));
             })();

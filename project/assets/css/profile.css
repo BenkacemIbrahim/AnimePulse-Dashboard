@@ -503,3 +503,15 @@ input:checked+.toggle-slider:before {
 .notification {
   animation: slideInRight 0.5s forwards;
 }
+
+body.dark { background-color: #0f0f0f; color: #e5e7eb; }
+body.dark nav { background-color: rgba(24,24,24,0.9); }
+body.dark .dashboard-card { background: #1a1a1a; border-color: rgba(255,255,255,0.08); }
+body.dark .background-pattern { background-color: #0f0f0f; background-image: radial-gradient(#2a2a2a 1px, transparent 1px); opacity: 0.4; }
+body.dark .form-input { background: #1f1f1f; border-color: #333; color: #e5e7eb; }
+body.dark .form-input:focus { border-color: #FF0000; box-shadow: 0 0 0 2px rgba(255,0,0,0.2); background: #111; }
+body.dark .text-gray-900 { color: #e5e7eb; }
+body.dark .text-gray-800 { color: #e5e7eb; }
+body.dark .text-gray-700 { color: #d1d5db; }
+body.dark .text-gray-600 { color: #9ca3af; }
+body.dark .text-gray-500 { color: #6b7280; }
