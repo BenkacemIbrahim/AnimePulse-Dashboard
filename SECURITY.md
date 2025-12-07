@@ -17,7 +17,7 @@ We take the security of AnimePulse Dashboard seriously. If you believe you have 
 - Disclose the vulnerability publicly before it has been addressed
 
 ### Please DO:
-1. **Email us directly** at: security@yourproject.com (replace with your actual security contact)
+1. **Email us directly** at: benkacem.ibrahim.dev@gmail.com 
 2. **Provide detailed information** including:
    - Description of the vulnerability
    - Steps to reproduce
@@ -108,4 +108,4 @@ We appreciate the security research community and will acknowledge researchers w
 
 ---
 
-**Last Updated**: December 2024
+**Last Updated**: December 2025
