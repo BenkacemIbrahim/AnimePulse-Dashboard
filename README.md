@@ -342,11 +342,6 @@ For detailed API documentation, see [API_DOCUMENTATION.md](./API_DOCUMENTATION.m
 - `GET /api/settings` - Get settings
 - `PUT /api/settings` - Update settings
 
----
-
-## 📸 Screenshots
-
-> Add screenshots of your application here
 
 ---
 
