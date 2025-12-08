@@ -109,8 +109,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/animepulse-dashboard.git
-cd animepulse-dashboard
+git clone https://github.com/BenkacemIbrahim/AnimePulse-dashboard.git
+cd AnimePulse-dashboard
 ```
 
 ### 2. Set Up the Database
